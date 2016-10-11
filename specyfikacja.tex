@@ -1,0 +1,109 @@
+\documentclass[11pt,a4paper]{mwart}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\setlength{\parindent}{1cm}
+\def\labelitemi{$\bullet$}
+\linespread{1.4}
+\usepackage[a4paper, left= 2.5cm, right=2.5cm, top=3.5cm, bottom=3.5cm, headsep=1.2cm]{geometry}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{xcolor}
+\definecolor{font-color}{RGB}{224, 226, 228}
+\definecolor{bg-color}{RGB}{41, 49, 52}
+\definecolor{string-color}{RGB}{235, 118, 0}
+\usepackage{listings}
+
+\begin{document}
+\lstset{ %
+  backgroundcolor=\color{bg-color},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  basicstyle=\sffamily\bfseries\small\color{font-color},        % the size of the fonts that are used for the code
+  breakatwhitespace=true,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{green},    % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  %frame=single,	                   % adds a frame around the code
+  %keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  language=Python,                 % the language of the code
+  otherkeywords={*,...},           % if you want to add more keywords to the set
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\tiny\color{gray}, % the style that is used for the line-numbers
+  %rulecolor=\color{blue},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{string-color},     % string literal style
+  tabsize=2,	                   % sets default tabsize to 2 spaces
+  title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+
+	\begin{center}
+		\begin{huge}
+			\textbf{FASTAanalyst}\\
+		\end{huge}
+		\begin{Large}
+			Biblioteka do analizy sekwencji DNA z plików FASTA\\
+		\end{Large}
+		\begin{large}
+			\textsc{Specyfikacja}\\
+		\end{large}
+		Październik 2016\\
+		\textit{M. Kępska, E. Król, A. Osina}
+		\vspace{.5cm}
+		\rule{\textwidth}{1pt}\\\rule[.5cm]{\textwidth}{1pt}
+	\end{center}
+	\section{Wprowadzenie}
+		Biblioteka FASTAanalyst jest przydatnym narzędziem bioinformatycznym.
+		Służy do odczytywania informacji z plików .FASTA i poddawania ich 
+		odpowiednim analizom. Biblioteka dostarcza takich analiz jak obliczanie
+		temperatury topnienia, wyliczanie masy cząsteczkowej czy wyliczanie 
+		punktów przyrównania dwóch sekwencji.
+	\section{Funkcjonalności}
+		\subsection{read\_FASTA}
+			Wczytuje pliki .FASTA i zwraca czystą sekwencję DNA (bez informacji
+			z nagłówka). Jeżeli użytkownik użyje tej funkcji do wczytania surowego
+			DNA, argumenty zostaną automatycznie przekazane funkcji 
+			\textsf{read\_DNA} (patrz niżej).
+		\subsection{read\_DNA}
+			Wczytuje surową sekwencję DNA. Funkcja ta ma być pomocna w przypadku 
+			wczytywaniu krótkich sekwencji DNA. Jeżeli użytkownik użyje tej funkcji 
+			do wczytania pliku .FASTA, argumenty zostaną automatycznie przekazane 	
+			funkcji \textsf{read\_FASTA}.
+		\subsection{lenght}
+			Zwraca długość podanej sekwencji.
+		\subsection{nucleotides\_occurence}
+			Podaje procentowe występowanie danego nukleotydu w sekwencji lub grupy
+			nukleotydów. Funkcja może przyjąć wiele argumentów, więc użytkownik
+			uzyskuje wiele informacji za jednym razem.\\
+			\indent Przykładowo: użytkownik chce dowiedzieć się jaki udział
+			sekwencji mają osobno nukleotydy A, T, C, G oraz grupy nukleotydów AT 
+			oraz CG. Podaje odpowiednie argumenty:
+			\begin{lstlisting}
+['a', 't', 'c', 'g', 'at', 'cg']
+			\end{lstlisting}
+			a funkcja zwraca mu słownik:
+			\begin{lstlisting}
+{'A': 32.35, 'T': 23.53, 'C': 26.47, 'G': 17.65, 'AT': 55.88,
+'GC': 44.12}
+			\end{lstlisting}
+		\subsection{complement}
+			Zwraca nić komplementarną do podanej sekwencji
+		\subsection{reverse\_complement}
+			Zwraca odwróconą nić komplementarną.
+		\subsection{molecular\_mass}
+			Zwraca masę cząsteczkową łańcucha.
+		\subsection{melting\_point}
+			Zwraca temperaturę potrzebną do denaturacji podanego łańcucha DNA.
+			Funkcja korzysta ze wzoru: $4(G+C)+2(A+T)$, gdzie $G$, $C$, $A$ i $T$
+			są, odpowiednio, liczbą zasad guaninowych, cytozynowych, adeninowych i 
+			tyminowych (lub uracylowych, w przypadku łańcuchów RNA).
+		\subsection{alignment}
+			Zwraca score przyrównania dwóch sekwencji. Wykorzystuje algorytm
+			Needlemana-Wunscha.
+\end{document}
