@@ -87,3 +87,9 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+specyfikacja.aux
+specyfikacja.pdf
+specyfikacja.synctex.gz
+
+.idea/
