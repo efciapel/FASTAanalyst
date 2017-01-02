@@ -1,11 +1,14 @@
 #coding: utf-8
+import re
 
-def read_fasta(file):
-    # Ewa Król
+def read_fasta(fasta_file):
     """Odczytuje plik FASTA.
     Args:
-        file (file): plik FASTA.
+        fasta_file (file): plik FASTA.
     """
+
+    with open(fasta_file, 'r') as seq:
+        aaa=1
 
 
 def read_dna(dna):
