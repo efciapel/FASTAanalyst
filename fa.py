@@ -8,7 +8,8 @@ def read_fasta(fasta_file):
     """
 
     with open(fasta_file, 'r') as seq:
-        aaa=1
+        seq = 1
+        #TODO dokonczyc funkcje
 
 
 def read_dna(dna):
