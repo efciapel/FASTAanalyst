@@ -1,23 +1,43 @@
 #coding: utf-8
 import re
 
+PATTERN = re.compile("[actgn]")
+
+
 def read_fasta(fasta_file):
     """Odczytuje plik FASTA.
     Args:
-        fasta_file (file): plik FASTA.
+        fasta_file (str): ścieżka pliku FASTA.
     """
 
-    with open(fasta_file, 'r') as seq:
-        seq = 1
-        #TODO dokonczyc funkcje
+    fasta_file = fasta_file.lower()
+    try:
+        with open(fasta_file, 'r') as f:
+            # sekwencją jest wszystko oprócz pierwszej linii
+            seq = f.read().splitlines()[1:]
+    except FileNotFoundError:
+        if len(PATTERN.findall(fasta_file)) == len(fasta_file):
+            raise Exception("Nie znaleziono podanego pliku, a podana ścieżka"
+                            "wygląda  jak sekwencja. "
+                            "Spróbuj użyć funkcji 'read_dna'.")
+        raise
+
+    return ''.join(seq)
 
 
 def read_dna(dna):
-    # Ewa Król
     """Odczytuje sekwencje DNA.
     Args:
         dna (str): sekwencja nukleotydowa.
     """
+    if len(PATTERN.findall(dna)) != len(dna):
+        raise Exception("Podana sekwencja posiada niepoprawne znaki. "
+                        "Sekwencje mogą składać się z liter: "
+                        "A, C, G, T, U i N. "
+                        "Jeżeli chciałeś/aś wczytać sekwencję z pliku, "
+                        "spróbuj użyć metody 'read_fasta'.")
+
+    return dna.lower()
 
 
 def length(dna):
