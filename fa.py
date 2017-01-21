@@ -105,7 +105,7 @@ def reverse_complement(seq):
 def molecular_mass(dna):
     """Zwraca nić masę cząsteczkową łańcucha.
     Args:
-        seq (str): sekwencja nukleotydowa.
+        dna (str): sekwencja nukleotydowa.
     """
     weights = {'a': 251.25,
                'c': 227.22,
