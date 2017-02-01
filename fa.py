@@ -1,5 +1,6 @@
 #coding: utf-8
 import re
+import numpy as np
 
 PATTERN = re.compile("[actgn]")
 
@@ -86,10 +87,74 @@ def melting_point(dna):
     """
 
 
-def alignment(dna_1, dna_2):
-    # Ewa Król
+def match(base_1, base_2):
+    """Sprawdza czy dane nukleotydy są takie same i zwraca odpowiednią wartość
+    Args:
+        base_1 (str): pierwszy nukleotyd.
+        base_2 (str): drugi nukleotyd.
+    """
+
+    if base_1 == base_2:
+        return 1
+    return -1
+
+
+def alignment(dna_1, dna_2, gap):
     """Zwraca nić score przyrównania dwóch sekwencji.
     Wykorzystuje algorytm Needlemana-Wunscha.
     Args:
-        dna (str): sekwencja nukleotydowa.
+        dna_1 (str): pierwsza sekwencja nukleotydowa.
+        dna_2 (str): druga sekwencja nukleotydowa.
+        gap (int): kara za przerwę
     """
+
+    # tworzenie macierzy F
+    matrix = np.zeros((length(dna_1) + 1, length(dna_2) + 1))
+
+    for row in range(len(matrix)):
+        for col in range(len(matrix[row])):
+            if row == 0 or col == 0:
+                matrix[row][col] = max(row, col) * gap
+            else:
+                # sprawdzenie czy nukleotydy są takie same
+                match_score = match(dna_1[row - 1], dna_2[col - 1])
+
+                diagonal = match_score + matrix[row - 1][col - 1]
+                top = matrix[row - 1][col] + gap
+                left = matrix[row][col - 1] + gap
+
+                matrix[row][col] = max(diagonal, top, left)
+    alignment_1 = ''
+    alignment_2 = ''
+    i = length(dna_1)
+    j = length(dna_2)
+
+    while i > 0 and j > 0:
+        match_score = match(dna_1[i - 1], dna_2[j - 1])
+
+        diagonal = match_score + matrix[i - 1][j - 1]
+        top = matrix[i - 1][j] + gap
+        left = matrix[i][j - 1] + gap
+
+        choices = {'diagonal': {'score': diagonal,
+                                'i': -1,
+                                'j': -1,
+                                'al_1': dna_1[i - 1],
+                                'al_2': dna_2[j - 1]},
+                   'top': {'score': top,
+                           'i': -1,
+                           'j': 0,
+                           'al_1': '-',
+                           'al_2': dna_2[j - 1]},
+                   'left': {'score': left,
+                            'i': 0,
+                            'j': -1,
+                            'al_1': dna_1[i - 1],
+                            'al_2': '-'}}
+
+        for choice in choices:
+            if matrix[i, j] == choices[choice]['score']:
+                i += choices[choice]['i']
+                j += choices[choice]['j']
+                alignment_1 = choices[choice]['al_1'] + alignment_1
+                alignment_2 = choices[choice]['al_2'] + alignment_2
