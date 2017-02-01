@@ -51,17 +51,27 @@ def sequence_type(seq):
 
 
 def length(seq):
-    # Anna Osina
     """Zwraca długość podanej sekwencji.
     Args:
         seq (str): sekwencja nukleotydowa.
     """
+    return len(seq)
 
 
-def nucleotide_occurence(*args):
-    # Anna Osina
+def nucleotide_occurrence(dna, *args):
     """Podaje procentowe występowanie danego nukleotydu w sekwencji lub grupy
-    nukleotydów."""
+    nukleotydów.
+    Args:
+        dna (str): sekwencja nukleotydowa.
+    """
+    ret = dict()
+    for arg in args:
+        occurrence = 0
+        for i in range(len(arg)):
+            occurrence += dna.count(arg[i])
+        occurrence /= length(dna)
+        ret.update({arg.upper(): round(occurrence, 2)})
+    return ret
 
 
 def complement(seq):
@@ -92,12 +102,22 @@ def reverse_complement(seq):
     return complement(seq)[::-1]
 
 
-def molecular_mass(seq):
-    # Anna Osina
+def molecular_mass(dna):
     """Zwraca nić masę cząsteczkową łańcucha.
     Args:
         seq (str): sekwencja nukleotydowa.
     """
+    weights = {'a': 251.25,
+               'c': 227.22,
+               'g': 267.25,
+               't': 242.24,
+               'u': 228.14}
+
+    mass = 0
+    for key in weights:
+        mass += dna.count(key) * weights[key]
+
+    return mass
 
 
 def melting_point(seq):
