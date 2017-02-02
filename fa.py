@@ -2,7 +2,7 @@
 import re
 import numpy as np
 
-PATTERN = re.compile("[actgn]")
+PATTERN = re.compile("[actgnu]")
 
 
 def read_fasta(fasta_file):
@@ -11,19 +11,19 @@ def read_fasta(fasta_file):
         fasta_file (str): ścieżka pliku FASTA.
     """
 
-    fasta_file = fasta_file.lower()
     try:
         with open(fasta_file, 'r') as f:
             # sekwencją jest wszystko oprócz pierwszej linii
             seq = f.read().splitlines()[1:]
     except FileNotFoundError:
+        fasta_file = fasta_file.lower()
         if len(PATTERN.findall(fasta_file)) == len(fasta_file):
             raise Exception("Nie znaleziono podanego pliku, a podana ścieżka"
                             "wygląda  jak sekwencja. "
                             "Spróbuj użyć funkcji 'read_dna'.")
         raise
 
-    return ''.join(seq)
+    return ''.join(seq).lower()
 
 
 def read_dna(dna):
@@ -44,7 +44,7 @@ def read_dna(dna):
 def sequence_type(seq):
     seq_type = 'DNA'
 
-    if seq.find('t') != -1:
+    if seq.find('t') == -1:
         seq_type = 'RNA'
 
     return seq_type
@@ -159,6 +159,7 @@ def alignment(dna_1, dna_2, gap):
     matrix = np.zeros((length(dna_1) + 1, length(dna_2) + 1))
 
     for row in range(len(matrix)):
+
         for col in range(len(matrix[row])):
             if row == 0 or col == 0:
                 matrix[row][col] = max(row, col) * gap
