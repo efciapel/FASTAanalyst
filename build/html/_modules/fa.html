@@ -1,0 +1,297 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>fa &#8212; FASTAanalyst 1.0.0 - dokumentacja</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Indeks" href="../genindex.html" />
+    <link rel="search" title="Szukaj" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Kod źródłowy modułu fa</h1><div class="highlight"><pre>
+<span></span><span class="c1">#coding: utf-8</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">PATTERN</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;[actgnu]&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="read_fasta"><a class="viewcode-back" href="../index.html#fa.read_fasta">[dokumenty]</a><span class="k">def</span> <span class="nf">read_fasta</span><span class="p">(</span><span class="n">fasta_file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Odczytuje plik FASTA.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        fasta_file (str): ścieżka pliku FASTA.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fasta_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="c1"># sekwencją jest wszystko oprócz pierwszej linii</span>
+            <span class="n">seq</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="n">fasta_file</span> <span class="o">=</span> <span class="n">fasta_file</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">PATTERN</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">fasta_file</span><span class="p">))</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">fasta_file</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Nie znaleziono podanego pliku, a podana ścieżka&quot;</span>
+                            <span class="s2">&quot;wygląda  jak sekwencja. &quot;</span>
+                            <span class="s2">&quot;Spróbuj użyć funkcji &#39;read_dna&#39;.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span>
+
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="read_dna"><a class="viewcode-back" href="../index.html#fa.read_dna">[dokumenty]</a><span class="k">def</span> <span class="nf">read_dna</span><span class="p">(</span><span class="n">dna</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Odczytuje sekwencje DNA.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        dna (str): sekwencja nukleotydowa.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">PATTERN</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">dna</span><span class="p">))</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dna</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Podana sekwencja posiada niepoprawne znaki. &quot;</span>
+                        <span class="s2">&quot;Sekwencje mogą składać się z liter: &quot;</span>
+                        <span class="s2">&quot;A, C, G, T, U i N. &quot;</span>
+                        <span class="s2">&quot;Jeżeli chciałeś/aś wczytać sekwencję z pliku, &quot;</span>
+                        <span class="s2">&quot;spróbuj użyć metody &#39;read_fasta&#39;.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dna</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span></div>
+
+
+<span class="k">def</span> <span class="nf">sequence_type</span><span class="p">(</span><span class="n">seq</span><span class="p">):</span>
+    <span class="n">seq_type</span> <span class="o">=</span> <span class="s1">&#39;DNA&#39;</span>
+
+    <span class="k">if</span> <span class="n">seq</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">seq_type</span> <span class="o">=</span> <span class="s1">&#39;RNA&#39;</span>
+
+    <span class="k">return</span> <span class="n">seq_type</span>
+
+
+<div class="viewcode-block" id="length"><a class="viewcode-back" href="../index.html#fa.length">[dokumenty]</a><span class="k">def</span> <span class="nf">length</span><span class="p">(</span><span class="n">seq</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Zwraca długość podanej sekwencji.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        seq (str): sekwencja nukleotydowa.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="nucleotide_occurrence"><a class="viewcode-back" href="../index.html#fa.nucleotide_occurrence">[dokumenty]</a><span class="k">def</span> <span class="nf">nucleotide_occurrence</span><span class="p">(</span><span class="n">dna</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Podaje procentowe występowanie danego nukleotydu w sekwencji lub grupy</span>
+<span class="sd">    nukleotydów.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        dna (str): sekwencja nukleotydowa.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+        <span class="n">occurrence</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arg</span><span class="p">)):</span>
+            <span class="n">occurrence</span> <span class="o">+=</span> <span class="n">dna</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">arg</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">occurrence</span> <span class="o">/=</span> <span class="n">length</span><span class="p">(</span><span class="n">dna</span><span class="p">)</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">arg</span><span class="o">.</span><span class="n">upper</span><span class="p">():</span> <span class="nb">round</span><span class="p">(</span><span class="n">occurrence</span><span class="p">,</span> <span class="mi">2</span><span class="p">)})</span>
+    <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="complement"><a class="viewcode-back" href="../index.html#fa.complement">[dokumenty]</a><span class="k">def</span> <span class="nf">complement</span><span class="p">(</span><span class="n">seq</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Zwraca nić komplementarną sekwencji.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        seq (str): sekwencja nukleotydowa.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nucleotides</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">:</span> <span class="s1">&#39;c&#39;</span><span class="p">}</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">seq_type</span> <span class="o">=</span> <span class="n">sequence_type</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">seq_type</span> <span class="o">==</span> <span class="s1">&#39;RNA&#39;</span><span class="p">:</span>
+        <span class="n">nucleotides</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="s1">&#39;u&#39;</span><span class="p">,</span> <span class="s1">&#39;u&#39;</span><span class="p">:</span> <span class="s1">&#39;a&#39;</span><span class="p">})</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">nucleotides</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="s1">&#39;t&#39;</span><span class="p">:</span> <span class="s1">&#39;a&#39;</span><span class="p">})</span>
+
+    <span class="k">for</span> <span class="n">base</span> <span class="ow">in</span> <span class="n">seq</span><span class="p">:</span>
+        <span class="n">ret</span> <span class="o">+=</span> <span class="n">nucleotides</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="reverse_complement"><a class="viewcode-back" href="../index.html#fa.reverse_complement">[dokumenty]</a><span class="k">def</span> <span class="nf">reverse_complement</span><span class="p">(</span><span class="n">seq</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Zwraca odwróconą nić komplementarną sekwencji.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        seq (str): sekwencja nukleotydowa.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">complement</span><span class="p">(</span><span class="n">seq</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="molecular_mass"><a class="viewcode-back" href="../index.html#fa.molecular_mass">[dokumenty]</a><span class="k">def</span> <span class="nf">molecular_mass</span><span class="p">(</span><span class="n">dna</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Zwraca nić masę cząsteczkową łańcucha.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        dna (str): sekwencja nukleotydowa.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mf">251.25</span><span class="p">,</span>
+               <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mf">227.22</span><span class="p">,</span>
+               <span class="s1">&#39;g&#39;</span><span class="p">:</span> <span class="mf">267.25</span><span class="p">,</span>
+               <span class="s1">&#39;t&#39;</span><span class="p">:</span> <span class="mf">242.24</span><span class="p">,</span>
+               <span class="s1">&#39;u&#39;</span><span class="p">:</span> <span class="mf">228.14</span><span class="p">}</span>
+
+    <span class="n">mass</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">weights</span><span class="p">:</span>
+        <span class="n">mass</span> <span class="o">+=</span> <span class="n">dna</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">*</span> <span class="n">weights</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">mass</span></div>
+
+
+<div class="viewcode-block" id="melting_point"><a class="viewcode-back" href="../index.html#fa.melting_point">[dokumenty]</a><span class="k">def</span> <span class="nf">melting_point</span><span class="p">(</span><span class="n">seq</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Zwraca temperaturę topnienia sekwencji.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        seq (str): sekwencja nukleotydowa.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">seq_type</span> <span class="o">=</span> <span class="n">sequence_type</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>
+    <span class="n">count_a</span> <span class="o">=</span> <span class="n">seq</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span>
+    <span class="n">count_c</span> <span class="o">=</span> <span class="n">seq</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">)</span>
+    <span class="n">count_g</span> <span class="o">=</span> <span class="n">seq</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;g&#39;</span><span class="p">)</span>
+    <span class="n">count_ut</span> <span class="o">=</span> <span class="n">seq</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">seq_type</span> <span class="o">==</span> <span class="s1">&#39;DNA&#39;</span> <span class="k">else</span> <span class="n">seq</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;u&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">(</span><span class="n">count_g</span> <span class="o">+</span> <span class="n">count_c</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">count_a</span> <span class="o">+</span> <span class="n">count_ut</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="match"><a class="viewcode-back" href="../index.html#fa.match">[dokumenty]</a><span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="n">base_1</span><span class="p">,</span> <span class="n">base_2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Sprawdza czy dane nukleotydy są takie same i zwraca odpowiednią wartość</span>
+<span class="sd">    Args:</span>
+<span class="sd">        base_1 (str): pierwszy nukleotyd.</span>
+<span class="sd">        base_2 (str): drugi nukleotyd.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">base_1</span> <span class="o">==</span> <span class="n">base_2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="alignment"><a class="viewcode-back" href="../index.html#fa.alignment">[dokumenty]</a><span class="k">def</span> <span class="nf">alignment</span><span class="p">(</span><span class="n">dna_1</span><span class="p">,</span> <span class="n">dna_2</span><span class="p">,</span> <span class="n">gap</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Zwraca nić score przyrównania dwóch sekwencji.</span>
+<span class="sd">    Wykorzystuje algorytm Needlemana-Wunscha.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        dna_1 (str): pierwsza sekwencja nukleotydowa.</span>
+<span class="sd">        dna_2 (str): druga sekwencja nukleotydowa.</span>
+<span class="sd">        gap (int): kara za przerwę</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># tworzenie macierzy F</span>
+    <span class="n">matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">length</span><span class="p">(</span><span class="n">dna_1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">length</span><span class="p">(</span><span class="n">dna_2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">matrix</span><span class="p">)):</span>
+
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">matrix</span><span class="p">[</span><span class="n">row</span><span class="p">])):</span>
+            <span class="k">if</span> <span class="n">row</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">col</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">matrix</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span> <span class="o">*</span> <span class="n">gap</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># sprawdzenie czy nukleotydy są takie same</span>
+                <span class="n">match_score</span> <span class="o">=</span> <span class="n">match</span><span class="p">(</span><span class="n">dna_1</span><span class="p">[</span><span class="n">row</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dna_2</span><span class="p">[</span><span class="n">col</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+
+                <span class="n">diagonal</span> <span class="o">=</span> <span class="n">match_score</span> <span class="o">+</span> <span class="n">matrix</span><span class="p">[</span><span class="n">row</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">col</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">top</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">[</span><span class="n">row</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">col</span><span class="p">]</span> <span class="o">+</span> <span class="n">gap</span>
+                <span class="n">left</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">col</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">gap</span>
+
+                <span class="n">matrix</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">diagonal</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">left</span><span class="p">)</span>
+    <span class="n">alignment_1</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">alignment_2</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">dna_1</span><span class="p">)</span>
+    <span class="n">j</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">dna_2</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">match_score</span> <span class="o">=</span> <span class="n">match</span><span class="p">(</span><span class="n">dna_1</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dna_2</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">diagonal</span> <span class="o">=</span> <span class="n">match_score</span> <span class="o">+</span> <span class="n">matrix</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">top</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">gap</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">gap</span>
+
+        <span class="n">choices</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;diagonal&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;score&#39;</span><span class="p">:</span> <span class="n">diagonal</span><span class="p">,</span>
+                                <span class="s1">&#39;i&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                                <span class="s1">&#39;j&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                                <span class="s1">&#39;al_1&#39;</span><span class="p">:</span> <span class="n">dna_1</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span>
+                                <span class="s1">&#39;al_2&#39;</span><span class="p">:</span> <span class="n">dna_2</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]},</span>
+                   <span class="s1">&#39;top&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;score&#39;</span><span class="p">:</span> <span class="n">top</span><span class="p">,</span>
+                           <span class="s1">&#39;i&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                           <span class="s1">&#39;j&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                           <span class="s1">&#39;al_1&#39;</span><span class="p">:</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;al_2&#39;</span><span class="p">:</span> <span class="n">dna_2</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]},</span>
+                   <span class="s1">&#39;left&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;score&#39;</span><span class="p">:</span> <span class="n">left</span><span class="p">,</span>
+                            <span class="s1">&#39;i&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                            <span class="s1">&#39;j&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                            <span class="s1">&#39;al_1&#39;</span><span class="p">:</span> <span class="n">dna_1</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span>
+                            <span class="s1">&#39;al_2&#39;</span><span class="p">:</span> <span class="s1">&#39;-&#39;</span><span class="p">}}</span>
+
+        <span class="k">for</span> <span class="n">choice</span> <span class="ow">in</span> <span class="n">choices</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="n">choices</span><span class="p">[</span><span class="n">choice</span><span class="p">][</span><span class="s1">&#39;score&#39;</span><span class="p">]:</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="n">choices</span><span class="p">[</span><span class="n">choice</span><span class="p">][</span><span class="s1">&#39;i&#39;</span><span class="p">]</span>
+                <span class="n">j</span> <span class="o">+=</span> <span class="n">choices</span><span class="p">[</span><span class="n">choice</span><span class="p">][</span><span class="s1">&#39;j&#39;</span><span class="p">]</span>
+                <span class="n">alignment_1</span> <span class="o">=</span> <span class="n">choices</span><span class="p">[</span><span class="n">choice</span><span class="p">][</span><span class="s1">&#39;al_1&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">alignment_1</span>
+                <span class="n">alignment_2</span> <span class="o">=</span> <span class="n">choices</span><span class="p">[</span><span class="n">choice</span><span class="p">][</span><span class="s1">&#39;al_2&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">alignment_2</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Kod modułu</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Szybkie wyszukiwanie</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Szukaj" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, M.Kepska, E.Krol, A.Osina.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
