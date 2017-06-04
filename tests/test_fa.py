@@ -78,3 +78,60 @@ def test_melting_point_is_correct():
     seq = read_dna(SEQUENCE)
     ret = melting_point(seq)
     assert ret == 60
+
+
+# lenght tests
+def test_lenght_is_correct():
+
+    seq = read_fasta(FASTA_FILE_PATH)
+    correct_lenght = len(seq)
+    assert length(seq) == correct_lenght
+
+
+# nucleotide_occurence tests
+@pytest.mark.parametrize('nucleotide, occurrence, sequence', [
+    ('a', 1, 'AAAAAAAAAAAA'),
+    ('c', 1, 'CCCCCCCCCCCC'),
+    ('g', 1, 'GGGGGGGGGGGG'),
+    ('t', 1, 'TTTTTTTTTTTT'),
+    ('at', 1, 'AAAAAATTTTTT'),
+    ('a', 0.5, 'AAAAAATTTTTT'),
+    ('t', 0.5, 'AAAAAATTTTTT'),
+    ('c', 0, 'AAAAAATTTTTT'),
+    ('g', 0, 'AAAAAATTTTTT'),
+])
+def test_nucleotide_occurrence_is_correct(nucleotide, occurrence, sequence):
+
+    seq = read_dna(sequence)
+    ret = nucleotide_occurrence(seq, nucleotide)
+    assert ret == {nucleotide.upper(): occurrence}
+
+
+def test_nucleotide_occurence_can_take_multiple_args():
+    seq = read_dna(SEQUENCE)
+    ret = nucleotide_occurrence(seq, 'a', 'g', 'ct')
+    assert ret['A'] == 0.25
+    assert ret['G'] == 0.25
+    assert ret['CT'] == 0.5
+
+
+def test_letter_case_is_not_relevant():
+    seq = read_dna(SEQUENCE)
+    ret = nucleotide_occurrence(seq, 'A', 'g', 'Ct')
+    assert ret['A'] == 0.25
+    assert ret['G'] == 0.25
+    assert ret['CT'] == 0.5
+
+
+# molecular_mass tests
+@pytest.mark.parametrize('test_seq, right_value', [
+    ('AAAA', 251.25 * 4),
+    ('CCCC', 227.22 * 4),
+    ('GGGG', 267.25 * 4),
+    ('TTTT', 242.24 * 4),
+    ('UUUU', 228.14 * 4),
+    ('AATT', 251.25 * 2 + 242.24 * 2),
+])
+def test_molecular_mass_is_correct(test_seq, right_value):
+    seq = read_dna(test_seq)
+    assert molecular_mass(seq) == right_value
