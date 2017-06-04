@@ -31,6 +31,7 @@ def read_dna(dna):
     Args:
         dna (str): sekwencja nukleotydowa.
     """
+    dna = dna.lower()
     if len(PATTERN.findall(dna)) != len(dna):
         raise Exception("Podana sekwencja posiada niepoprawne znaki. "
                         "Sekwencje mogą składać się z liter: "
