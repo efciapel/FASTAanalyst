@@ -62,6 +62,24 @@ def test_wrong_sequence_raises_exception():
         read_dna(WRONG_SEQUENCE)
 
 
+# complement and reverse_complement tests
+@pytest.mark.parametrize('function, correct_return', [
+    (complement, 'tttttgggggaaaaaccccc'),
+    (reverse_complement, 'cccccaaaaagggggttttt'),
+])
+def test_complement_and_reverse_complement_is_correct(function, correct_return):
+    seq = read_dna(SEQUENCE)
+    ret = function(seq)
+    assert ret == correct_return
+
+
+# melting_point tests
+def test_melting_point_is_correct():
+    seq = read_dna(SEQUENCE)
+    ret = melting_point(seq)
+    assert ret == 60
+
+
 # lenght tests
 def test_lenght_is_correct():
 
