@@ -67,11 +67,12 @@ def nucleotide_occurrence(dna, *args):
     """
     ret = dict()
     for arg in args:
+        base = arg.lower()
         occurrence = 0
-        for i in range(len(arg)):
-            occurrence += dna.count(arg[i])
+        for i in range(len(base)):
+            occurrence += dna.count(base[i])
         occurrence /= length(dna)
-        ret.update({arg.upper(): round(occurrence, 2)})
+        ret.update({base.upper(): round(occurrence, 2)})
     return ret
 
 

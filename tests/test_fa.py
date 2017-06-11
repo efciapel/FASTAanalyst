@@ -3,7 +3,7 @@ import pytest
 from source.fa import *
 
 
-FASTA_FILE_PATH = 'tests/sequence'
+FASTA_FILE_PATH = 'tests/sequence.fasta'
 SEQUENCE = 'AAAAACCCCCTTTTTGGGGG'  # 5 x A, 5 x C, 5 x T, 5 x G
 WRONG_SEQUENCE = 'VERY_WRONG_SEQUENCE_WITH_INVALID_CHARACTERS'
 
